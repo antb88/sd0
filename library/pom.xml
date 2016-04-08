@@ -9,4 +9,13 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>library</artifactId>
+	<dependencies>
+	<dependency>
+		<groupId>org.jgrapht</groupId>
+		<artifactId>jgrapht-core</artifactId>
+		<version>0.9.2</version>
+	</dependency>
+	</dependencies>
+
+
 </project>
