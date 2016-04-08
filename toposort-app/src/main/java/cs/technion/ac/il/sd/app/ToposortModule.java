@@ -5,6 +5,6 @@ import com.google.inject.AbstractModule;
 public class ToposortModule extends AbstractModule {
   @Override
   protected void configure() {
-    bind(Toposort.class).to(FakeToposort.class);
+    bind(Toposort.class).to(ToposortImpl.class);
   }
 }
