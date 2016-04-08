@@ -87,16 +87,6 @@ public class ToposortImpl implements Toposort
         }
     }
 
-//    public static void main(String[] args)
-//    {
-//        DefaultDirectedGraph graph = new DefaultDirectedGraph<>(DefaultEdge.class);
-//        graph.addVertex(1);
-//        System.out.println(graph.containsVertex(1));
-//        System.out.println(graph.vertexSet().size());
-//        graph.addVertex(1);
-//        System.out.println(graph.vertexSet().size());
-//
-//    }
 
 
 
