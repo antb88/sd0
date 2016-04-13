@@ -31,7 +31,7 @@ public class GraphToposortTest {
     private static final DirectedAcyclicGraph<Integer, DefaultEdge> emptyGraph = new DirectedAcyclicGraph<>(DefaultEdge.class);
     private static final DirectedAcyclicGraph<Integer, DefaultEdge> complexGraph = new DirectedAcyclicGraph<>(DefaultEdge.class);
 
-    private <V, E> Iterator<V> toposort(DirectedGraph<V, E> graph) {
+    private <V, E> Optional<Iterator<V>> toposort(DirectedGraph<V, E> graph) {
         return GraphUtils.toposort(graph);
     }
 
@@ -106,23 +106,8 @@ public class GraphToposortTest {
 
     @Test
     public void nullGraphThrows() {
-        thrown.expect(NullPointerException.class);
-        toposort(null);
-    }
-    @Test
-    public void createCyclicFails() {
-        DirectedAcyclicGraph<Integer, DefaultEdge> cyclicGraph = new DirectedAcyclicGraph<>(DefaultEdge.class);
-
-        cyclicGraph.addVertex(1);
-        cyclicGraph.addVertex(2);
-        cyclicGraph.addVertex(3);
-        cyclicGraph.addVertex(4);
-        cyclicGraph.addEdge(1, 2);
-        cyclicGraph.addEdge(1, 3);
-        cyclicGraph.addEdge(3, 4);
         thrown.expect(IllegalArgumentException.class);
-        cyclicGraph.addEdge(4, 1);
-
+        toposort(null);
     }
 
     @Test
@@ -137,43 +122,38 @@ public class GraphToposortTest {
         cyclicGraph.addEdge(1, 3);
         cyclicGraph.addEdge(3, 4);
         cyclicGraph.addEdge(4, 1);
-        thrown.expect(IllegalArgumentException.class);
-        toposort(cyclicGraph);
+        Assert.assertEquals(Optional.empty(), toposort(cyclicGraph));
 
     }
 
-
     @Rule
     public Timeout globalTimeout = Timeout.seconds(10);
-
 
 
     @Test
     public void smallGraphReturnsValidSort() {
 
         List<Integer> topoSort = new LinkedList<>();
-        toposort(smallGraph).forEachRemaining(topoSort::add);
+        toposort(smallGraph).get().forEachRemaining(topoSort::add);
         boolean sortValid = topoSort.equals(new ArrayList<>(Arrays.asList(1, 2, 3, 4)))
                 || topoSort.equals(new ArrayList<>(Arrays.asList(1, 3, 2, 4)));
 
-        Assert.assertTrue(toposortInvariant(smallGraph, toposort(smallGraph)));
+        Assert.assertTrue(toposortInvariant(smallGraph, toposort(smallGraph).get()));
         Assert.assertTrue(sortValid);
     }
 
 
 
-
-
     @Test
     public void emptyGraphReturnsEmptySort() {
-        Iterator<Integer> topoSort = toposort(emptyGraph);
+        Iterator<Integer> topoSort = toposort(emptyGraph).get();
         Assert.assertEquals(false, topoSort.hasNext());
     }
 
 
     @Test
     public void complexGraphPreservesInvariant() {
-        Iterator<Integer> topoSort = toposort(complexGraph);
+        Iterator<Integer> topoSort = toposort(complexGraph).get();
         Assert.assertTrue(toposortInvariant(complexGraph, topoSort));
     }
 
