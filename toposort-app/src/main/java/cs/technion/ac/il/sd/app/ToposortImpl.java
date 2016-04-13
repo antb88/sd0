@@ -31,7 +31,8 @@ public class ToposortImpl implements Toposort
     @Override
     public void processFile(File file) {
 
-        try {
+        try
+        {
             GraphUtils.toposort(buildGraph(file)).forEachRemaining(external::process);
         }
         catch (Exception e) {
@@ -44,11 +45,12 @@ public class ToposortImpl implements Toposort
         DirectedGraph<Integer, DefaultEdge> graph = new DirectedAcyclicGraph<>(DefaultEdge.class);
 
         BufferedReader br = new BufferedReader(new FileReader(file));
-        String line = br.readLine();
-
-        while (line != null) {
-            processLine(graph, line);
-            line = br.readLine();
+        try
+        {
+            br.lines().forEach((l) -> processLine(graph, l));
+        }
+        finally {
+            br.close();
         }
         return graph;
     }
@@ -58,15 +60,15 @@ public class ToposortImpl implements Toposort
         if(line.contains(EDGE_SYMBOLE))
         {
             String[] vertexes = line.split(EDGE_SYMBOLE);
-            int source = Integer.parseInt(vertexes[0]);
-            int dest = Integer.parseInt(vertexes[1]);
+            int source = Integer.parseInt(vertexes[0].trim());
+            int dest = Integer.parseInt(vertexes[1].trim());
             graph.addVertex(source);
             graph.addVertex(dest);
             graph.addEdge(source,dest);
         }
         else
         {
-            graph.addVertex(Integer.parseInt(line));
+            graph.addVertex(Integer.parseInt(line.trim()));
         }
     }
 }

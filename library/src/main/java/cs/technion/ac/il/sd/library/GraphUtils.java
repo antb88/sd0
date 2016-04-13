@@ -19,6 +19,7 @@ public class GraphUtils {
      *
      * @param graph - graph on which topological sort will be applied
      * @return Iterator whose order of iteration is graph's topological sort
+     * @throws IllegalArgumentException iff cycle is detected
      */
 
     public static <V,E> Iterator<V> toposort(DirectedGraph<V, E> graph)  {
