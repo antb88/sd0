@@ -13,11 +13,15 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.Timeout;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Test file for {@link GraphUtils#toposort(DirectedAcyclicGraph)}
+ * Test file for {@link GraphUtils#toposort(DirectedGraph)}
  */
 public class GraphToposortTest {
 
@@ -27,7 +31,7 @@ public class GraphToposortTest {
     private static final DirectedAcyclicGraph<Integer, DefaultEdge> emptyGraph = new DirectedAcyclicGraph<>(DefaultEdge.class);
     private static final DirectedAcyclicGraph<Integer, DefaultEdge> complexGraph = new DirectedAcyclicGraph<>(DefaultEdge.class);
 
-    private <V, E> Iterator<V> toposort(DirectedAcyclicGraph<V, E> graph) {
+    private <V, E> Iterator<V> toposort(DirectedGraph<V, E> graph) {
         return GraphUtils.toposort(graph);
     }
 
@@ -37,6 +41,10 @@ public class GraphToposortTest {
         int order = 0;
         while (toposort.hasNext()) {
             topoOrder.put(toposort.next(), ++order);
+        }
+        if (topoOrder.keySet().size() != graph.vertexSet().size())
+        {
+            return false;
         }
 
         for (E edge : graph.edgeSet()) {
@@ -59,6 +67,7 @@ public class GraphToposortTest {
 
 
     @Rule public ExpectedException thrown = ExpectedException.none();
+
 
     @BeforeClass
     public static  void setupSmall() {
@@ -113,6 +122,23 @@ public class GraphToposortTest {
         cyclicGraph.addEdge(3, 4);
         thrown.expect(IllegalArgumentException.class);
         cyclicGraph.addEdge(4, 1);
+
+    }
+
+    @Test
+    public void cyclicToposortFails() {
+        DirectedGraph<Integer, DefaultEdge> cyclicGraph = new DefaultDirectedGraph<>(DefaultEdge.class);
+
+        cyclicGraph.addVertex(1);
+        cyclicGraph.addVertex(2);
+        cyclicGraph.addVertex(3);
+        cyclicGraph.addVertex(4);
+        cyclicGraph.addEdge(1, 2);
+        cyclicGraph.addEdge(1, 3);
+        cyclicGraph.addEdge(3, 4);
+        cyclicGraph.addEdge(4, 1);
+        thrown.expect(IllegalArgumentException.class);
+        toposort(cyclicGraph);
 
     }
 

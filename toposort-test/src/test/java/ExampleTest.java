@@ -27,7 +27,7 @@ public class ExampleTest {
   }
 
   @Rule
-  public Timeout globalTimeout = Timeout.seconds(10);
+  public Timeout globalTimeout = Timeout.seconds(60);
 
   @Test
   public void testSimple() {

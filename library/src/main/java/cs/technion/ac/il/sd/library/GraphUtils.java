@@ -15,15 +15,16 @@ import java.util.Objects;
 public class GraphUtils {
 
     /**
-     * Performs topological sort on DirectedAcyclicGraph
+     * Performs topological sort on DirectedGraph
      *
      * @param graph - graph on which topological sort will be applied
      * @return Iterator whose order of iteration is graph's topological sort
      */
 
-    public static <V,E> Iterator<V> toposort(DirectedAcyclicGraph<V, E> graph)  {
+    public static <V,E> Iterator<V> toposort(DirectedGraph<V, E> graph)  {
         Objects.requireNonNull(graph);
+        if (new CycleDetector<>(graph).detectCycles())
+            throw new IllegalArgumentException("graph contains cycle");
         return new TopologicalOrderIterator<>(graph);
     }
-
 }
