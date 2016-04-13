@@ -11,7 +11,9 @@ import org.jgrapht.graph.DefaultEdge;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.Iterator;
+import java.util.Optional;
 
 /**
  * Created by Nati on 06/04/2016.
@@ -29,28 +31,27 @@ public class ToposortImpl implements Toposort
     }
 
     @Override
-    public void processFile(File file) {
-
-        try
+    public void processFile(File file)
+    {
+        Optional<Iterator<Integer>> toposort = GraphUtils.toposort(buildGraph(file));
+        if(!toposort.isPresent())
         {
-            GraphUtils.toposort(buildGraph(file)).forEachRemaining(external::process);
-        }
-        catch (Exception e) {
             external.fail();
+            return;
         }
+        toposort.get().forEachRemaining(external::process);
     }
 
-    private DirectedGraph<Integer, DefaultEdge> buildGraph(File file) throws Exception {
-
-        DirectedGraph<Integer, DefaultEdge> graph = new DirectedAcyclicGraph<>(DefaultEdge.class);
-
-        BufferedReader br = new BufferedReader(new FileReader(file));
-        try
+    private DirectedGraph<Integer, DefaultEdge> buildGraph(File file)
+    {
+        DirectedGraph<Integer, DefaultEdge> graph = new DefaultDirectedGraph<>(DefaultEdge.class);
+        try(BufferedReader br = new BufferedReader(new FileReader(file)))
         {
             br.lines().forEach((l) -> processLine(graph, l));
         }
-        finally {
-            br.close();
+        catch (IOException e)
+        {
+            throw new AssertionError();
         }
         return graph;
     }
