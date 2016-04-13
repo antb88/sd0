@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 /**
  * Test file for {@link GraphUtils#toposort(DirectedGraph)}
  */
-public class GraphToposortTest {
+public class GraphUtilsTest {
 
     private static final boolean PRINT_ON_FAIL = true;
 
@@ -35,15 +35,14 @@ public class GraphToposortTest {
         return GraphUtils.toposort(graph);
     }
 
-    public  <V, E> boolean toposortInvariant(DirectedGraph<V, E> graph, Iterator<V> toposort) {
+    public <V, E> boolean toposortInvariant(DirectedGraph<V, E> graph, Iterator<V> toposort) {
 
         Map<V, Integer> topoOrder = new HashMap<>();
         int order = 0;
         while (toposort.hasNext()) {
             topoOrder.put(toposort.next(), ++order);
         }
-        if (topoOrder.keySet().size() != graph.vertexSet().size())
-        {
+        if (topoOrder.keySet().size() != graph.vertexSet().size()) {
             return false;
         }
 
@@ -66,11 +65,11 @@ public class GraphToposortTest {
     }
 
 
-    @Rule public ExpectedException thrown = ExpectedException.none();
-
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @BeforeClass
-    public static  void setupSmall() {
+    public static void setupSmall() {
         smallGraph.addVertex(1);
         smallGraph.addVertex(2);
         smallGraph.addVertex(3);
@@ -113,7 +112,6 @@ public class GraphToposortTest {
     @Test
     public void cyclicToposortFails() {
         DirectedGraph<Integer, DefaultEdge> cyclicGraph = new DefaultDirectedGraph<>(DefaultEdge.class);
-
         cyclicGraph.addVertex(1);
         cyclicGraph.addVertex(2);
         cyclicGraph.addVertex(3);
@@ -122,8 +120,8 @@ public class GraphToposortTest {
         cyclicGraph.addEdge(1, 3);
         cyclicGraph.addEdge(3, 4);
         cyclicGraph.addEdge(4, 1);
+        Assert.assertEquals(true, GraphUtils.hasCycle(cyclicGraph));
         Assert.assertEquals(Optional.empty(), toposort(cyclicGraph));
-
     }
 
     @Rule
@@ -135,13 +133,12 @@ public class GraphToposortTest {
 
         List<Integer> topoSort = new LinkedList<>();
         toposort(smallGraph).get().forEachRemaining(topoSort::add);
-        boolean sortValid = topoSort.equals(new ArrayList<>(Arrays.asList(1, 2, 3, 4)))
-                || topoSort.equals(new ArrayList<>(Arrays.asList(1, 3, 2, 4)));
+        boolean sortValid = topoSort.equals(Arrays.asList(1, 2, 3, 4))
+                || topoSort.equals(Arrays.asList(1, 3, 2, 4));
 
         Assert.assertTrue(toposortInvariant(smallGraph, toposort(smallGraph).get()));
         Assert.assertTrue(sortValid);
     }
-
 
 
     @Test
@@ -156,5 +153,4 @@ public class GraphToposortTest {
         Iterator<Integer> topoSort = toposort(complexGraph).get();
         Assert.assertTrue(toposortInvariant(complexGraph, topoSort));
     }
-
 }
