@@ -58,6 +58,10 @@ public class ToposortImpl implements Toposort
 
 
     private void processLine(DirectedGraph<Integer, DefaultEdge> graph, String line) {
+        if(line.trim().isEmpty())
+        {
+            return;
+        }
         if(line.contains(EDGE_SYMBOLE))
         {
             String[] vertexes = line.split(EDGE_SYMBOLE);
